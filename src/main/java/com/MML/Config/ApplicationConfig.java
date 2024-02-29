@@ -19,9 +19,11 @@ public class ApplicationConfig {
 
     private final UserRepository userRepository;
 
+    @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
+
     @Bean
     public AuthenticationProvider authenticationProvider() {
 
