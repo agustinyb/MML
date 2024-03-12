@@ -4,12 +4,13 @@ import com.MML.JWT.JwtService;
 import com.MML.User.Role;
 import com.MML.User.User;
 import com.MML.User.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -21,19 +22,20 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public AuthResponse login(LoginRequest request) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(),request.getPassword()));
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         UserDetails user=userRepository.findByUsername(request.getUsername()).orElseThrow();
-        String token= jwtService.getToken(user);
+        String token=jwtService.getToken(user);
         return AuthResponse.builder()
                 .token(token)
                 .build();
+
     }
 
     public AuthResponse register(RegisterRequest request) {
         User user = User.builder()
-                .username(request.email)
-                .password(request.password)
-                .registerDate(request.registerDate)
+                .username(request.getUsername())
+                .password(passwordEncoder.encode( request.getPassword()))
+                .registerDate(request.getRegisterDate())
                 .role(Role.USER)
                 .build();
 
@@ -42,5 +44,7 @@ public class AuthService {
         return AuthResponse.builder()
                 .token(jwtService.getToken(user))
                 .build();
+
     }
+
 }
